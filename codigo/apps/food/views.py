@@ -12,24 +12,49 @@ from .models import DetallePedido, Pedido, Producto
 
 def log_in(request):
     if request.user.is_authenticated:
-        return redirect("food:home")
+        return redirect("food:shop")
 
     form = LoginForm(request.POST or None)
-    context = {"message": None, "form": form}
+
+    context = {
+        "message": None,
+        "form": form,
+        "form_title": "Iniciar sesión",
+        "form_subtitle": "Ingresa tus credenciales para continuar.",
+        "form_icon": "login",
+        "submit_text": "Ingresar",
+        "submit_icon": "login",
+        "cancel_url": "food:shop",
+        "cancel_text": "Volver a la tienda",
+    }
 
     if request.method == "POST" and form.is_valid():
-        user = authenticate(request, **form.cleaned_data)
+        user = authenticate(
+            request,
+            **form.cleaned_data,
+        )
 
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect("food:home")
+
+                next_url = request.GET.get("next")
+
+                if next_url:
+                    return redirect(next_url)
+
+                return redirect("food:shop")
 
             context["message"] = "El usuario ha sido desactivado"
+
         else:
             context["message"] = "Usuario o contraseña incorrecta"
 
-    return render(request, "foods/login.html", context)
+    return render(
+        request,
+        "foods/login.html",
+        context,
+    )
 
 
 @login_required
@@ -53,21 +78,63 @@ def food_detail(request, pk):
 
 @login_required
 def food_create(request):
-    form = FoodsForm(request.POST or None, request.FILES or None)
+    form = FoodsForm(
+        request.POST or None,
+        request.FILES or None,
+    )
+
     if request.method == "POST" and form.is_valid():
         form.save()
         return redirect("food:home")
-    return render(request, "foods/form.html", {"form": form})
+
+    context = {
+        "form": form,
+        "form_title": "Agregar producto",
+        "form_subtitle": "Completa la información del producto.",
+        "form_icon": "restaurant_menu",
+        "submit_text": "Crear producto",
+        "submit_icon": "save",
+        "cancel_url": "food:home",
+        "cancel_text": "Cancelar",
+    }
+
+    return render(
+        request,
+        "foods/form.html",
+        context,
+    )
 
 
 @login_required
 def food_update(request, pk):
     food = get_object_or_404(Producto, pk=pk)
-    form = FoodsForm(request.POST or None, request.FILES or None, instance=food)
+
+    form = FoodsForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=food,
+    )
+
     if request.method == "POST" and form.is_valid():
         form.save()
         return redirect("food:home")
-    return render(request, "foods/form.html", {"form": form})
+
+    context = {
+        "form": form,
+        "form_title": "Editar producto",
+        "form_subtitle": "Actualiza la información del producto.",
+        "form_icon": "edit",
+        "submit_text": "Guardar cambios",
+        "submit_icon": "save",
+        "cancel_url": "food:home",
+        "cancel_text": "Cancelar",
+    }
+
+    return render(
+        request,
+        "foods/form.html",
+        context,
+    )
 
 
 @login_required
@@ -171,6 +238,8 @@ def shop(request):
         "foods/shop.html",
         context,
     )
+
+
 @login_required
 @require_POST
 def cart_increase(request, pk):

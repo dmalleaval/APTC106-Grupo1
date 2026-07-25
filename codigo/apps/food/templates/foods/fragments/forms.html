@@ -1,30 +1,166 @@
 {% load widget_tweaks %}
-<form enctype="multipart/form-data" method="post" >
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="row" >
-            {% if field.errors %}
-               {{ field.errors }}
-            {% endif %}
-            <div class="{% if field|widget_type == 'clearablefileinput' %}  browser-default{% endif %} input-field col s12">
-                {% comment %}
-                     De esta manera podemos hacer formularios reutilizables con widget_tweaks,
-                     tambien podemos añadir librerias a nuestro gusto
-                {% endcomment %}
-                {% if field|widget_type == 'clearablefileinput' %}
-                    <p class="grey-text"> {{ field.label }} </p>
-                    {% render_field field class+="validate" %}
-                {% else %}
-                    {% render_field field class+="validate" %}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
 
-    <div class="row">
-        <button class="btn waves-effect waves-light right red darken-1" type="submit" name="action">Entrar
-            <i class="material-icons right">send</i>
-        </button>
+<div class="product-form-wrapper">
+  <div class="product-form-card">
+
+    <div class="product-form-header">
+      <div>
+        <h4 class="product-form-title">
+          {{ form_title|default:"Formulario" }}
+        </h4>
+
+        {% if form_subtitle %}
+          <p class="product-form-subtitle">
+            {{ form_subtitle }}
+          </p>
+        {% endif %}
+      </div>
+
+      <i class="material-icons product-form-icon">
+        {{ form_icon|default:"edit" }}
+      </i>
     </div>
-</form>
+
+    <form
+      method="post"
+      enctype="multipart/form-data"
+      class="product-form"
+    >
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="form-error-box">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      {% for field in form %}
+
+        <div class="form-group">
+
+          {% if field|widget_type == "checkboxinput" %}
+
+            <p class="checkbox-field">
+              {% render_field field class+="filled-in" %}
+
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+              </label>
+            </p>
+
+          {% elif field|widget_type == "clearablefileinput" %}
+
+            <label
+              class="form-label"
+              for="{{ field.id_for_label }}"
+            >
+              {{ field.label }}
+            </label>
+
+            <div class="file-field input-field custom-file-field">
+              <div class="btn file-select-button">
+                <i class="material-icons left">image</i>
+
+                <span>Seleccionar imagen</span>
+
+                {% render_field field %}
+              </div>
+
+              <div class="file-path-wrapper">
+                <input
+                  class="file-path validate"
+                  type="text"
+                  placeholder="Ningún archivo seleccionado"
+                />
+              </div>
+            </div>
+
+          {% elif field|widget_type == "select" %}
+
+            <label
+              class="form-label"
+              for="{{ field.id_for_label }}"
+            >
+              {{ field.label }}
+            </label>
+
+            <div class="custom-select-wrapper">
+              {% render_field field class+="browser-default custom-select" %}
+            </div>
+
+          {% elif field|widget_type == "textarea" %}
+
+            <label
+              class="form-label"
+              for="{{ field.id_for_label }}"
+            >
+              {{ field.label }}
+            </label>
+
+            {% render_field field class+="materialize-textarea custom-input" placeholder=field.label %}
+
+          {% else %}
+
+            <label
+              class="form-label"
+              for="{{ field.id_for_label }}"
+            >
+              {{ field.label }}
+            </label>
+
+            {% render_field field class+="custom-input validate" placeholder=field.label %}
+
+          {% endif %}
+
+          {% if field.help_text %}
+            <small class="form-help">
+              {{ field.help_text }}
+            </small>
+          {% endif %}
+
+          {% if field.errors %}
+            <div class="field-errors">
+              {% for error in field.errors %}
+                <span>
+                  <i class="material-icons">error_outline</i>
+                  {{ error }}
+                </span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
+
+      {% endfor %}
+
+      <div class="product-form-actions">
+
+        {% if cancel_url %}
+          <a
+            href="{% url cancel_url %}"
+            class="btn btn-cancel"
+          >
+            <i class="material-icons left">arrow_back</i>
+
+            {{ cancel_text|default:"Cancelar" }}
+          </a>
+        {% endif %}
+
+        <button
+          class="btn waves-effect waves-light btn-save"
+          type="submit"
+          name="action"
+        >
+          <i class="material-icons left">
+            {{ submit_icon|default:"save" }}
+          </i>
+
+          {{ submit_text|default:"Guardar" }}
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>

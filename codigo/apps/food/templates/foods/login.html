@@ -1,21 +1,17 @@
-{% extends 'foods/fragments/base.html' %} {% block main-content %}
+{% extends 'foods/fragments/base.html' %}
 
-<div class="center-align">
-  <img
-    src="https://cdn.dribbble.com/users/1162077/screenshots/3333053/popcorn.png"
-    alt="movie icon"
-    height="200px"
-    width="200px"
-  />
-</div>
+{% block title %}
+  {{ form_title|default:"Iniciar sesión" }}
+{% endblock %}
 
-<div class="row">
-  <div class="col s8 offset-s2">
-    {% if message %}
-    <div class="card-panel red darken-1">
-      <span class="white-text"> {{ message }} </span>
+{% block main-content %}
+
+  {% if message %}
+    <div class="card-panel red lighten-4 red-text text-darken-4">
+      {{ message }}
     </div>
-    {% endif %} {% include 'foods/fragments/forms.html' %}
-  </div>
-</div>
+  {% endif %}
+
+  {% include "foods/fragments/forms.html" %}
+
 {% endblock %}

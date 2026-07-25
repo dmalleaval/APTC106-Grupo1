@@ -1,5 +1,23 @@
-{% extends 'foods/fragments/base.html' %} {% block main-content %}
+{% extends 'foods/fragments/base.html' %}
+
+{% block title %}
+  {{ form_title|default:"Formulario" }}
+{% endblock %}
+
+{% block main-content %}
+
 <div class="row">
-  <div class="col s8 offset-s2">{% include 'foods/fragments/forms.html' %}</div>
+  <div class="col s12 m10 l8 offset-m1 offset-l2">
+
+    {% if message %}
+      <div class="card-panel red lighten-4 red-text text-darken-4">
+        {{ message }}
+      </div>
+    {% endif %}
+
+    {% include 'foods/fragments/forms.html' %}
+
+  </div>
 </div>
+
 {% endblock %}

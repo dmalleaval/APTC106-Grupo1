@@ -624,7 +624,271 @@
       }
     </style>
 
-    {% block extra-css %}{% endblock %}
+    {% block extra-css %}
+    <style>
+      .product-form-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0 40px;
+      }
+
+      .product-form-card {
+        width: 100%;
+        max-width: 820px;
+        padding: 30px;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(88, 54, 31, 0.09);
+      }
+
+      .product-form-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding-bottom: 22px;
+        margin-bottom: 28px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .product-form-title {
+        margin: 0;
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .product-form-subtitle {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .product-form-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 55px;
+        height: 55px;
+        color: var(--primary);
+        background-color: #fff1e8;
+        border-radius: 16px;
+        font-size: 30px;
+      }
+
+      .product-form {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .form-group {
+        position: relative;
+        margin: 0;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .custom-input,
+      .materialize-textarea.custom-input {
+        width: 100% !important;
+        min-height: 48px;
+        margin: 0 !important;
+        padding: 0 14px !important;
+        background-color: #fffdfa !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 12px !important;
+        box-shadow: none !important;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .materialize-textarea.custom-input {
+        min-height: 110px;
+        padding-top: 14px !important;
+        resize: vertical;
+      }
+
+      .custom-input:focus,
+      .materialize-textarea.custom-input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 3px rgba(232, 93, 53, 0.12) !important;
+      }
+
+      .custom-select-wrapper {
+        position: relative;
+      }
+
+      .custom-select {
+        width: 100%;
+        height: 48px;
+        padding: 0 14px;
+        color: var(--text);
+        background-color: #fffdfa;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-family: "Poppins", sans-serif;
+        cursor: pointer;
+      }
+
+      .custom-select:focus {
+        border-color: var(--primary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(232, 93, 53, 0.12);
+      }
+
+      .custom-file-field {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0;
+      }
+
+      .file-select-button {
+        flex: 0 0 auto;
+        background-color: var(--primary);
+      }
+
+      .file-select-button:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .file-path-wrapper {
+        flex: 1;
+        padding-left: 0 !important;
+      }
+
+      .file-path-wrapper input {
+        height: 44px !important;
+        margin: 0 !important;
+        padding: 0 12px !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+      }
+
+      input[type="checkbox"].filled-in + label {
+        color: var(--text);
+        font-weight: 500;
+        font-size: 15px;
+      }
+
+      input[type="checkbox"].filled-in:checked + label:after {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      [type="checkbox"].filled-in:checked + span:not(.lever)::after {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+
+      .field-errors {
+        margin-top: 7px;
+      }
+
+      .field-errors span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--danger);
+        font-size: 12px;
+      }
+
+      .field-errors i {
+        font-size: 16px;
+      }
+
+      .form-error-box {
+        padding: 12px 15px;
+        color: var(--danger);
+        background-color: #ffebee;
+        border: 1px solid #ffcdd2;
+        border-radius: 10px;
+      }
+
+      .form-help {
+        display: block;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .product-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding-top: 22px;
+        margin-top: 6px;
+        border-top: 1px solid var(--border);
+      }
+
+      .btn-save {
+        background-color: var(--primary);
+      }
+
+      .btn-save:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 7px 16px rgba(232, 93, 53, 0.28);
+      }
+
+      .btn-cancel {
+        color: var(--text);
+        background-color: #eeeeee;
+      }
+
+      .btn-cancel:hover {
+        color: var(--text);
+        background-color: #dddddd;
+        transform: translateY(-2px);
+      }
+
+      @media only screen and (max-width: 600px) {
+        .product-form-card {
+          padding: 22px 18px;
+          border-radius: 15px;
+        }
+
+        .product-form-header {
+          align-items: flex-start;
+        }
+
+        .product-form-icon {
+          width: 46px;
+          height: 46px;
+          font-size: 25px;
+        }
+
+        .product-form-title {
+          font-size: 23px;
+        }
+
+        .custom-file-field {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .file-select-button {
+          width: 100%;
+        }
+
+        .product-form-actions {
+          flex-direction: column-reverse;
+        }
+
+        .product-form-actions .btn {
+          width: 100%;
+        }
+      }
+    </style>
+    {% endblock %}
   </head>
 
   <body>
@@ -636,7 +900,7 @@
       <div class="nav-wrapper">
         <a id="logo-container" href="{% url 'food:shop' %}" class="brand-logo">
           <i class="material-icons">shopping_basket</i>
-          <span>FoodPlease</span>
+          <span>FoodPlease - Grupo1</span>
         </a>
 
         <ul class="right hide-on-med-and-down">
@@ -771,6 +1035,9 @@
 
       <p class="footer-small">
         Venta de alimentos de forma simple, rápida y segura.
+      </p>
+      <p class="footer-small">
+        Integrantes: Isabel Vera - Gabriel Vera - Diego Mallea
       </p>
     </footer>
 
