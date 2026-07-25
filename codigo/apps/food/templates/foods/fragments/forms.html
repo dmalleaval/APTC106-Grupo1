@@ -1,0 +1,30 @@
+{% load widget_tweaks %}
+<form enctype="multipart/form-data" method="post" >
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="row" >
+            {% if field.errors %}
+               {{ field.errors }}
+            {% endif %}
+            <div class="{% if field|widget_type == 'clearablefileinput' %}  browser-default{% endif %} input-field col s12">
+                {% comment %}
+                     De esta manera podemos hacer formularios reutilizables con widget_tweaks,
+                     tambien podemos añadir librerias a nuestro gusto
+                {% endcomment %}
+                {% if field|widget_type == 'clearablefileinput' %}
+                    <p class="grey-text"> {{ field.label }} </p>
+                    {% render_field field class+="validate" %}
+                {% else %}
+                    {% render_field field class+="validate" %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <button class="btn waves-effect waves-light right red darken-1" type="submit" name="action">Entrar
+            <i class="material-icons right">send</i>
+        </button>
+    </div>
+</form>

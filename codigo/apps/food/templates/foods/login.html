@@ -1,0 +1,21 @@
+{% extends 'foods/fragments/base.html' %} {% block main-content %}
+
+<div class="center-align">
+  <img
+    src="https://cdn.dribbble.com/users/1162077/screenshots/3333053/popcorn.png"
+    alt="movie icon"
+    height="200px"
+    width="200px"
+  />
+</div>
+
+<div class="row">
+  <div class="col s8 offset-s2">
+    {% if message %}
+    <div class="card-panel red darken-1">
+      <span class="white-text"> {{ message }} </span>
+    </div>
+    {% endif %} {% include 'foods/fragments/forms.html' %}
+  </div>
+</div>
+{% endblock %}

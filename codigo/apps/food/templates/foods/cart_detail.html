@@ -1,0 +1,132 @@
+{% extends 'foods/fragments/base.html' %} {% block main-content %}
+
+<h4>
+  <i class="material-icons left">shopping_cart</i>
+  Mi carrito
+</h4>
+
+{% if not pedido %}
+
+<div class="card-panel orange lighten-4 center">
+  <h5>Tu carrito está vacío</h5>
+
+  <p>Agrega algunos productos para comenzar tu compra.</p>
+
+  <a href="{% url 'food:home' %}" class="btn"> Seguir comprando </a>
+</div>
+
+{% else %}
+
+<table class="striped centered">
+  <thead>
+    <tr>
+      <th>Imagen</th>
+      <th>Producto</th>
+      <th>Precio</th>
+      <th>Cantidad</th>
+      <th>Subtotal</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for detalle in pedido.detalles.all %}
+
+    <tr>
+      <td>
+        {% if detalle.producto.imagen %}
+        <img
+          src="{{ detalle.producto.imagen.url }}"
+          class="product-image"
+          alt="{{ detalle.producto.nombre }}"
+        />
+        {% endif %}
+      </td>
+
+      <td>
+        <strong>{{ detalle.producto.nombre }}</strong>
+      </td>
+
+      <td>$ {{ detalle.precio_unitario|floatformat:0 }}</td>
+
+      <td>{{ detalle.cantidad }}</td>
+
+      <td>$ {{ detalle.subtotal|floatformat:0 }}</td>
+
+      <td>
+        <form
+          method="post"
+          action="{% url 'food:cart-decrease' detalle.pk %}"
+          style="display: inline"
+        >
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            class="btn-floating orange"
+            title="Disminuir cantidad"
+          >
+            <i class="material-icons">remove</i>
+          </button>
+        </form>
+
+        <form
+          method="post"
+          action="{% url 'food:cart-increase' detalle.pk %}"
+          style="display: inline"
+        >
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            class="btn-floating green"
+            title="Aumentar cantidad"
+          >
+            <i class="material-icons">add</i>
+          </button>
+        </form>
+
+        <form
+          method="post"
+          action="{% url 'food:cart-delete' detalle.pk %}"
+          style="display: inline"
+        >
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            class="btn-floating red"
+            title="Eliminar producto"
+          >
+            <i class="material-icons">delete</i>
+          </button>
+        </form>
+      </td>
+    </tr>
+
+    {% empty %}
+
+    <tr>
+      <td colspan="6">No hay productos en el carrito.</td>
+    </tr>
+
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="card" style="margin-top: 30px">
+  <div class="card-content">
+    <h5 class="right-align">
+      Total:
+      <span class="red-text"> $ {{ pedido.total|floatformat:0 }} </span>
+    </h5>
+  </div>
+
+  <div class="card-action right-align">
+    <a href="{% url 'food:home' %}" class="btn grey"> Seguir comprando </a>
+
+    <a href="#" class="btn green"> Confirmar pedido </a>
+  </div>
+</div>
+
+{% endif %} {% endblock %}

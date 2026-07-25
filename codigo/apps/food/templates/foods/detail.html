@@ -1,0 +1,90 @@
+{% extends 'foods/fragments/base.html' %} {% block main-content %}
+<div class="row">
+  <div class="col s12 m10 offset-m1 l8 offset-l2">
+    <div class="card">
+      <td>
+        {% if food.imagen %}
+        <img
+          src="{{ food.imagen.url }}"
+          alt="{{ food.nombre }}"
+          style="
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 8px;
+          "
+        />
+        {% else %} Sin imagen {% endif %}
+      </td>
+
+      <div class="card-content">
+        <span class="card-title"> {{ food.nombre }} </span>
+
+        <p>
+          <strong>Descripción</strong>
+        </p>
+
+        <p style="margin-bottom: 20px">{{ food.descripcion }}</p>
+
+        <p>
+          <strong>Categoría:</strong>
+          {{ food.categoria }}
+        </p>
+
+        <p>
+          <strong>Precio:</strong>
+          $ {{ food.precio|floatformat:0 }}
+        </p>
+
+        <p>
+          <strong>Disponible:</strong>
+
+          {% if food.disponible %}
+          <span class="green-text">
+            <i class="material-icons tiny">check_circle</i>
+            Sí
+          </span>
+          {% else %}
+          <span class="red-text">
+            <i class="material-icons tiny">cancel</i>
+            No
+          </span>
+          {% endif %}
+        </p>
+
+        <p>
+          <strong>Activo:</strong>
+
+          {% if food.activo %}
+          <span class="green-text">
+            <i class="material-icons tiny">check_circle</i>
+            Sí
+          </span>
+          {% else %}
+          <span class="red-text">
+            <i class="material-icons tiny">cancel</i>
+            No
+          </span>
+          {% endif %}
+        </p>
+
+        <p>
+          <strong>Fecha de creación:</strong>
+          {{ food.creado_en|date:"d/m/Y H:i:s" }}
+        </p>
+
+        <p>
+          <strong>Última actualización:</strong>
+          {{ food.actualizado_en|date:"d/m/Y H:i:s" }}
+        </p>
+      </div>
+
+      <div class="card-action">
+        <a href="{% url 'food:home' %}"> Volver </a>
+
+        <a href="{% url 'food:foods-edit' pk=food.pk %}"> Editar </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

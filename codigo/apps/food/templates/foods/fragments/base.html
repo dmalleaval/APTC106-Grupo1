@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>{% block title %}FoodPlease Grupo 1{% endblock %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Google Icons -->
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
+    <!-- Materialize -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #e85d35;
+        --primary-dark: #c94725;
+        --secondary: #ffb703;
+        --background: #fffaf4;
+        --surface: #ffffff;
+        --text: #2f2f2f;
+        --muted: #777777;
+        --border: #f0dfd1;
+        --success: #2e7d32;
+        --danger: #d84343;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-color: var(--background);
+        color: var(--text);
+        font-family: "Poppins", sans-serif;
+      }
+
+      .promo-bar {
+        padding: 8px 15px;
+        background-color: var(--primary);
+        color: white;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      nav {
+        height: 72px;
+        line-height: normal;
+        background-color: var(--surface);
+        box-shadow: 0 4px 18px rgba(88, 54, 31, 0.08);
+      }
+
+      nav .nav-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 92%;
+        max-width: 1280px;
+        height: 72px;
+        margin: 0 auto;
+      }
+
+      nav .brand-logo {
+        position: static;
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        color: var(--primary);
+        font-size: 23px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        line-height: normal;
+        white-space: nowrap;
+        transform: none;
+      }
+
+      nav .brand-logo i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: auto;
+        margin: 0;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      nav ul {
+        display: flex;
+        align-items: center;
+        height: 72px;
+        margin: 0;
+      }
+
+      nav ul li {
+        display: flex;
+        align-items: center;
+        height: 72px;
+      }
+
+      nav ul li a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        height: 72px;
+        padding: 0 13px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 500;
+        line-height: normal;
+        white-space: nowrap;
+        transition: 0.2s ease;
+      }
+
+      nav ul li a i.material-icons {
+        height: auto;
+        margin: 0;
+        font-size: 21px;
+        line-height: 1;
+      }
+
+      nav ul li a:hover {
+        color: var(--primary);
+        background-color: #fff2e9;
+      }
+
+      nav .button-collapse {
+        margin: 0;
+        color: var(--primary);
+      }
+
+      .cart-link {
+        position: relative;
+      }
+
+      .cart-badge {
+        position: absolute;
+        top: 10px;
+        right: 2px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background-color: var(--secondary);
+        color: #4b2a00;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 19px;
+      }
+
+      .logout-form {
+        display: flex;
+        align-items: center;
+        height: 72px;
+        margin: 0;
+      }
+
+      .logout-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 72px;
+        padding: 0 13px;
+        color: var(--text);
+        border: none;
+        background-color: transparent;
+        font-family: "Poppins", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: normal;
+        text-transform: none;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .logout-button i {
+        height: auto;
+        margin: 0;
+        font-size: 21px;
+        line-height: 1;
+      }
+
+      .logout-button:hover {
+        color: var(--primary);
+        background-color: #fff2e9;
+      }
+
+      .search-section {
+        padding: 20px 0 8px;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 18px;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(88, 54, 31, 0.06);
+      }
+
+      .search-box i {
+        color: var(--muted);
+      }
+
+      .search-box input[type="text"] {
+        height: 52px;
+        margin: 0;
+        border: none !important;
+        box-shadow: none !important;
+      }
+
+      .page-container {
+        padding-top: 20px;
+        padding-bottom: 48px;
+      }
+
+      .page-header {
+        margin-bottom: 28px;
+      }
+
+      .page-title {
+        margin: 0;
+        color: var(--text);
+        font-size: 30px;
+        font-weight: 700;
+      }
+
+      .page-subtitle {
+        margin-top: 6px;
+        color: var(--muted);
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(88, 54, 31, 0.08);
+        overflow: hidden;
+      }
+
+      .product-card {
+        height: 100%;
+        background-color: var(--surface);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(88, 54, 31, 0.14);
+      }
+
+      .product-card .card-image {
+        height: 220px;
+        padding: 18px;
+        background-color: #fffdf9;
+      }
+
+      .product-card .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .product-card .card-content {
+        padding: 18px;
+      }
+
+      .product-card .card-title {
+        min-height: 52px;
+        margin-bottom: 8px;
+        color: var(--text);
+        font-size: 19px;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+
+      .product-description {
+        min-height: 45px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .product-price {
+        margin-top: 15px;
+        color: var(--primary);
+        font-size: 23px;
+        font-weight: 700;
+      }
+
+      .product-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .product-actions .btn {
+        flex: 1;
+      }
+
+      .btn,
+      .btn-large {
+        background-color: var(--primary);
+        border-radius: 10px;
+        font-weight: 600;
+        text-transform: none;
+        box-shadow: none;
+      }
+
+      .btn:hover,
+      .btn-large:hover {
+        background-color: var(--primary-dark);
+        box-shadow: 0 5px 14px rgba(232, 93, 53, 0.25);
+      }
+
+      .btn-outline {
+        color: var(--primary);
+        background-color: transparent;
+        border: 1px solid var(--primary);
+      }
+
+      .btn-outline:hover {
+        color: white;
+        background-color: var(--primary);
+      }
+
+      .card-panel {
+        border-radius: 14px;
+        box-shadow: none;
+      }
+
+      table {
+        overflow: hidden;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(88, 54, 31, 0.06);
+      }
+
+      table thead {
+        background-color: #fff0e5;
+      }
+
+      table th {
+        padding: 18px 14px;
+        color: #65331f;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      table td {
+        padding: 14px;
+        vertical-align: middle;
+      }
+
+      table.striped > tbody > tr:nth-child(odd) {
+        background-color: #fffdfa;
+      }
+
+      table tbody tr:hover {
+        background-color: #fff5ed !important;
+      }
+
+      .product-image {
+        width: 76px;
+        height: 76px;
+        padding: 4px;
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        object-fit: contain;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .status-active {
+        color: var(--success);
+        background-color: #e8f5e9;
+      }
+
+      .status-inactive {
+        color: var(--danger);
+        background-color: #ffebee;
+      }
+
+      .side-nav {
+        background-color: var(--surface);
+      }
+
+      .side-nav li {
+        display: block;
+        height: auto;
+      }
+
+      .side-nav li > a {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 48px;
+        padding: 0 32px;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .side-nav li > a i.material-icons {
+        margin: 0;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .mobile-logout-form {
+        margin: 0;
+      }
+
+      .mobile-logout-button {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        height: 48px;
+        padding: 0 32px;
+        color: var(--text);
+        border: none;
+        background-color: transparent;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        text-align: left;
+        text-transform: none;
+        cursor: pointer;
+      }
+
+      .mobile-logout-button i {
+        margin: 0;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .footer {
+        margin-top: 40px;
+        padding: 25px 15px;
+        background-color: #2f2f2f;
+        color: #ffffff;
+        text-align: center;
+      }
+
+      .footer p {
+        margin: 4px 0;
+      }
+
+      .footer-small {
+        color: #c9c9c9;
+        font-size: 12px;
+      }
+
+      @media only screen and (max-width: 992px) {
+        nav .nav-wrapper {
+          position: relative;
+          width: 92%;
+        }
+
+        nav .brand-logo {
+          position: absolute;
+          left: 50%;
+          font-size: 20px;
+          transform: translateX(-50%);
+        }
+
+        nav .brand-logo i {
+          display: inline-flex;
+          font-size: 26px;
+        }
+
+        nav .button-collapse {
+          display: flex;
+          align-items: center;
+          height: 72px;
+        }
+
+        .page-container {
+          padding-top: 15px;
+        }
+
+        .table-responsive {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 850px;
+        }
+      }
+
+      @media only screen and (max-width: 600px) {
+        .promo-bar {
+          font-size: 11px;
+        }
+
+        nav .brand-logo {
+          font-size: 18px;
+        }
+
+        nav .brand-logo i {
+          font-size: 24px;
+        }
+
+        .product-card .card-image {
+          height: 190px;
+        }
+
+        .product-actions {
+          flex-direction: column;
+        }
+
+        .product-actions .btn {
+          width: 100%;
+        }
+      }
+
+      .btn-floating.orange:hover {
+        background: #ef6c00 !important;
+        box-shadow: 0 0 15px rgba(239, 108, 0, 0.55);
+      }
+
+      .btn-floating.green:hover {
+        background: #2e7d32 !important;
+        box-shadow: 0 0 15px rgba(46, 125, 50, 0.55);
+      }
+
+      .btn-floating.red:hover {
+        background: #c62828 !important;
+        box-shadow: 0 0 15px rgba(198, 40, 40, 0.55);
+      }
+
+      /* ==========================================
+   BOTONES DE ACCIÓN
+========================================== */
+
+      .btn-floating,
+      .btn-small {
+        transition: all 0.25s ease;
+      }
+
+      .btn-floating:hover,
+      .btn-small:hover {
+        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      }
+
+      .btn-floating:active,
+      .btn-small:active {
+        transform: scale(0.95);
+      }
+
+      /* ---------- Editar ---------- */
+
+      .btn-edit {
+        background: #fb8c00;
+      }
+
+      .btn-edit:hover {
+        background: #ef6c00 !important;
+        box-shadow: 0 0 16px rgba(239, 108, 0, 0.55);
+      }
+
+      /* ---------- Eliminar ---------- */
+
+      .btn-delete {
+        background: #e53935;
+      }
+
+      .btn-delete:hover {
+        background: #c62828 !important;
+        box-shadow: 0 0 16px rgba(198, 40, 40, 0.55);
+      }
+
+      /* ---------- Ver detalle ---------- */
+
+      .btn-detail {
+        background: #1e88e5;
+      }
+
+      .btn-detail:hover {
+        background: #1565c0 !important;
+        box-shadow: 0 0 16px rgba(21, 101, 192, 0.55);
+      }
+
+      /* ---------- Agregar ---------- */
+
+      .btn-add {
+        transition: all 0.25s ease;
+      }
+
+      .btn-add:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28);
+      }
+    </style>
+
+    {% block extra-css %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="promo-bar">
+      Compra tus productos favoritos de manera rápida y sencilla
+    </div>
+
+    <nav role="navigation">
+      <div class="nav-wrapper">
+        <a id="logo-container" href="{% url 'food:shop' %}" class="brand-logo">
+          <i class="material-icons">shopping_basket</i>
+          <span>FoodPlease</span>
+        </a>
+
+        <ul class="right hide-on-med-and-down">
+          {% if request.user.is_authenticated %}
+          <li>
+            <a href="{% url 'food:home' %}">
+              <i class="material-icons">restaurant_menu</i>
+              <span>Productos</span>
+            </a>
+          </li>
+          {% endif %}
+
+          <li>
+            <a href="{% url 'food:shop' %}">
+              <i class="material-icons">storefront</i>
+              <span>Tienda</span>
+            </a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+          <li>
+            <a href="{% url 'food:category-list' %}">
+              <i class="material-icons">category</i>
+              <span>Categorías</span>
+            </a>
+          </li>
+          {% endif %}
+
+          <li>
+            <a href="{% url 'food:cart-detail' %}" class="cart-link">
+              <i class="material-icons">shopping_cart</i>
+              <span>Carrito</span>
+
+              <span class="cart-badge"> {{ cart_count|default:"0" }} </span>
+            </a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+          <li>
+            <form
+              method="post"
+              action="{% url 'food:log-out' %}"
+              class="logout-form"
+            >
+              {% csrf_token %}
+
+              <button type="submit" class="btn-flat logout-button">
+                <i class="material-icons">logout</i>
+                <span>Salir</span>
+              </button>
+            </form>
+          </li>
+          {% endif %}
+        </ul>
+
+        <ul id="nav-mobile" class="side-nav">
+          <li>
+            <a href="{% url 'food:shop' %}">
+              <i class="material-icons">storefront</i>
+              Tienda
+            </a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+          <li>
+            <a href="{% url 'food:home' %}">
+              <i class="material-icons">restaurant_menu</i>
+              Productos
+            </a>
+          </li>
+
+          <li>
+            <a href="{% url 'food:category-list' %}">
+              <i class="material-icons">category</i>
+              Categorías
+            </a>
+          </li>
+          {% endif %}
+
+          <li>
+            <a href="{% url 'food:cart-detail' %}">
+              <i class="material-icons">shopping_cart</i>
+              Carrito ({{ cart_count|default:"0" }})
+            </a>
+          </li>
+
+          {% if request.user.is_authenticated %}
+          <li>
+            <form
+              method="post"
+              action="{% url 'food:log-out' %}"
+              class="mobile-logout-form"
+            >
+              {% csrf_token %}
+
+              <button type="submit" class="mobile-logout-button">
+                <i class="material-icons">logout</i>
+                Salir
+              </button>
+            </form>
+          </li>
+          {% endif %}
+        </ul>
+
+        <a href="#" data-activates="nav-mobile" class="button-collapse">
+          <i class="material-icons">menu</i>
+        </a>
+      </div>
+    </nav>
+
+    <div class="container search-section">
+      <form method="get" action="{% url 'food:shop' %}">
+        <div class="search-box">
+          <i class="material-icons">search</i>
+
+          <input
+            type="text"
+            name="q"
+            value="{{ request.GET.q }}"
+            placeholder="Buscar productos..."
+          />
+        </div>
+      </form>
+    </div>
+
+    <main class="container page-container">
+      {% block main-content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+      <p><strong>FoodPlease</strong></p>
+
+      <p class="footer-small">
+        Venta de alimentos de forma simple, rápida y segura.
+      </p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+    <script>
+      $(document).ready(function () {
+        $(".button-collapse").sideNav();
+
+        $("select").material_select();
+
+        $(".datepicker").pickadate({
+          selectMonths: true,
+          selectYears: 15,
+          today: "Hoy",
+          clear: "Limpiar",
+          close: "Aceptar",
+          closeOnSelect: false,
+        });
+      });
+    </script>
+
+    {% block extra-js %}{% endblock %}
+  </body>
+</html>

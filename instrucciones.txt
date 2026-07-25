@@ -1,0 +1,114 @@
+Notas Ejecución
+
+Primeros pasos:
+
+1 - Intalllar Python https://www.python.org/downloads/
+
+
+2- Descargar el proyecto
+
+3- abrir terminar CMD y navegar hasta carpeta master del proyecto (visualizar manage.py)
+
+4- crear entorno virtual (creara una carpeta virtual .env)
+
+	python -m venv .venv
+
+5- crear entorno virtual
+
+	.venv\Scripts\activate.bat
+
+6- actualizar PIP
+
+	python -m pip install --upgrade pip
+
+
+7- instalamos las dependecia definidas en archivo requirements
+
+	pip install -r requirements.txt
+
+8- creamos la base de datos a utilizar 
+
+	python manage.py migrate
+
+9- creamos un usuario admin para ingresar a la app.
+
+	python manage.py createsuperuser
+
+10- levantamos la aplicación
+
+	python manage.py runserver
+
+
+En el lanevador ya podemos ingresar a:
+
+	link general
+	http://127.0.0.1:8000/
+
+	link adm
+	http://127.0.0.1:8000/admin/
+
+
+
+
+***********************************
+Para abrirlo nuevamente otro día
+***********************************
+
+No debes repetir toda la instalación. Solo necesitas entrar a la carpeta, activar el entorno y levantar el servidor:
+
+cd C:\proyectos\simple-crud-django-5.2\simple-crud-django-master
+
+.venv\Scripts\activate.bat
+
+python manage.py runserver
+
+
+******************************************
+Crear usuario o modificar desde python
+******************************************
+
+crear usuario no admin
+
+	python manage.py shell
+
+	from django.contrib.auth.models import User
+
+	User.objects.create_user(
+		username='juan',
+		password='12345678',
+		email='juan@gmail.com'
+	)
+
+	exit()
+	
+
+comprobar usuario:
+
+from django.contrib.auth.models import User
+
+User.objects.all()
+
+
+crear usuario admin y quitarle privilegios
+
+python manage.py shell
+
+from django.contrib.auth.models import User
+
+u = User.objects.get(username='admin')
+
+u.is_superuser = False
+u.is_staff = False
+u.save()
+
+exit()
+
+***************************************************
+Consideraciones a la hora de programar
+***************************************************
+
+si modificamos el modelo siempre considerar los siguientes comandos para que se reinicie los campos
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
