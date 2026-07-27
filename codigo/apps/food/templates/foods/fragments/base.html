@@ -30,7 +30,7 @@
         --primary: #e8622c;
         --primary-dark: #c9612f;
         --secondary: #f0b429;
-        --background: #faf5ec;
+        --background: #fffdfa;
         --surface: #ffffff;
         --surface-muted: #fbf6ef;
         --text: #2b2320;
@@ -528,6 +528,86 @@
           bottom: 12px;
           width: auto;
         }
+      }
+
+      .confirm-modal-overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background-color: rgba(43, 35, 32, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease;
+      }
+
+      .confirm-modal-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .confirm-modal {
+        width: 100%;
+        max-width: 380px;
+        padding: 28px;
+        background-color: var(--surface);
+        border-radius: 18px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        text-align: center;
+        transform: translateY(12px);
+        transition: transform 0.2s ease;
+      }
+
+      .confirm-modal-overlay.is-open .confirm-modal {
+        transform: translateY(0);
+      }
+
+      .confirm-modal-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 16px;
+        background-color: var(--danger-bg);
+        border-radius: 50%;
+        color: var(--danger);
+      }
+
+      .confirm-modal-title {
+        margin: 0 0 8px;
+        color: var(--text);
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .confirm-modal-text {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .confirm-modal-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .confirm-modal-actions .btn {
+        flex: 1;
+      }
+
+      .confirm-modal-delete-btn {
+        background-color: var(--danger) !important;
+      }
+
+      .confirm-modal-delete-btn:hover {
+        background-color: #a52d20 !important;
       }
 
       /* Listado en tarjetas: reemplaza la tabla en pantallas angostas para
@@ -1431,6 +1511,31 @@
 
     <div class="side-nav-overlay" id="sideNavOverlay"></div>
 
+    <div class="confirm-modal-overlay" id="confirmModalOverlay">
+      <div class="confirm-modal" role="alertdialog" aria-modal="true">
+        <div class="confirm-modal-icon">
+          <i class="material-icons">delete</i>
+        </div>
+
+        <h5 class="confirm-modal-title">
+          ¿Quieres eliminar <span id="confirmModalItemName">este elemento</span>?
+        </h5>
+
+        <p class="confirm-modal-text">
+          No podrás recuperarlo una vez sea eliminado.
+        </p>
+
+        <div class="confirm-modal-actions">
+          <button type="button" class="btn btn-cancel" id="confirmModalCancel">
+            Volver
+          </button>
+          <button type="button" class="btn confirm-modal-delete-btn" id="confirmModalConfirm">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
     {% if request.resolver_match.url_name == "shop" %}
     <div class="container search-section">
       <form method="get" action="{% url 'food:shop' %}">
@@ -1565,6 +1670,49 @@
             closeBtn.addEventListener("click", dismiss);
           }
         });
+
+        // Modal de confirmación antes de eliminar productos/categorías.
+        var confirmOverlay = document.getElementById("confirmModalOverlay");
+        var confirmItemName = document.getElementById("confirmModalItemName");
+        var confirmCancelBtn = document.getElementById("confirmModalCancel");
+        var confirmDeleteBtn = document.getElementById("confirmModalConfirm");
+        var pendingDeleteForm = null;
+
+        function closeConfirmModal() {
+          pendingDeleteForm = null;
+          confirmOverlay.classList.remove("is-open");
+        }
+
+        if (confirmOverlay && confirmDeleteBtn) {
+          document.querySelectorAll("[data-confirm-delete]").forEach(function (btn) {
+            btn.addEventListener("click", function (event) {
+              event.preventDefault();
+              pendingDeleteForm = btn.closest("form");
+              confirmItemName.textContent = btn.dataset.itemName || "este elemento";
+              confirmOverlay.classList.add("is-open");
+            });
+          });
+
+          confirmCancelBtn.addEventListener("click", closeConfirmModal);
+
+          confirmOverlay.addEventListener("click", function (event) {
+            if (event.target === confirmOverlay) {
+              closeConfirmModal();
+            }
+          });
+
+          confirmDeleteBtn.addEventListener("click", function () {
+            if (pendingDeleteForm) {
+              pendingDeleteForm.submit();
+            }
+          });
+
+          document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape" && confirmOverlay.classList.contains("is-open")) {
+              closeConfirmModal();
+            }
+          });
+        }
       });
 
       $(document).ready(function () {
