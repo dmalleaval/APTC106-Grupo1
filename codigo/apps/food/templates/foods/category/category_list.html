@@ -1,33 +1,129 @@
 {% extends 'foods/fragments/base.html' %} {% block main-content %}
 <div class="row">
   <div class="col s12">
+    <a
+      class="waves-effect waves-light btn right btn-add"
+      href="{% url 'food:category-create' %}"
+      ><i class="material-icons left">add</i>Agregar categoría</a
+    >
+  </div>
+</div>
+<div class="row">
+  <div class="col s12">
     {% if not categories %}
     <div class="card-panel red">
       <span class="white-text">No hay registros actualmente</span>
     </div>
     {% else %}
-    <table class="striped centered">
-      <thead>
-        <tr>
-          <th width="20%">Nombre</th>
-          <th>Descripción</th>
-          <th>Estado</th>
-          <th>Creada</th>
-          <th>Ultima actualizacion</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for category_item in categories %}
-        <tr>
-          <td width="20%">{{ category_item.nombre }}</td>
-          <td>{{ category_item.descripcion }}</td>
-          <td>{% if category_item.activa %} ✅ {% else %} ❌ {% endif %}</td>
-          <td>{{ category_item.creada_en|date:"d/m/Y H:i:s" }}</td>
-          <td>{{ category_item.actualizada_en|date:"d/m/Y H:i:s" }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="striped centered">
+        <thead>
+          <tr>
+            <th width="20%">Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Creada</th>
+            <th>Ultima actualizacion</th>
+            <th width="20%">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for category_item in categories %}
+          <tr>
+            <td width="20%">{{ category_item.nombre }}</td>
+            <td>{{ category_item.descripcion|truncatechars:60 }}</td>
+            <td>
+              {% if category_item.activa %}
+              <span class="status status-active">Activa</span>
+              {% else %}
+              <span class="status status-inactive">Inactiva</span>
+              {% endif %}
+            </td>
+            <td>{{ category_item.creada_en|date:"d/m/Y H:i:s" }}</td>
+            <td>{{ category_item.actualizada_en|date:"d/m/Y H:i:s" }}</td>
+            <td width="20%">
+              <a
+                class="btn-floating btn-small waves-effect waves-light btn-edit"
+                href="{% url 'food:category-edit' pk=category_item.pk %}"
+                title="Editar"
+              >
+                <i class="material-icons">edit</i>
+              </a>
+
+              <form
+                method="post"
+                action="{% url 'food:category-delete' pk=category_item.pk %}"
+                style="display: inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="btn-floating btn-small waves-effect waves-light btn-delete"
+                  title="Eliminar"
+                >
+                  <i class="material-icons">delete</i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="record-cards">
+      {% for category_item in categories %}
+      <div class="record-card">
+        <div class="record-card-media">
+          <i class="material-icons">category</i>
+        </div>
+
+        <div class="record-card-body">
+          <div class="record-card-top">
+            <span class="record-card-name">{{ category_item.nombre }}</span>
+            {% if category_item.activa %}
+            <span class="status status-active">Activa</span>
+            {% else %}
+            <span class="status status-inactive">Inactiva</span>
+            {% endif %}
+          </div>
+
+          {% if category_item.descripcion %}
+          <p class="record-card-desc">{{ category_item.descripcion|truncatechars:90 }}</p>
+          {% endif %}
+
+          <div class="record-card-bottom">
+            <span class="record-card-price">{{ category_item.actualizada_en|date:"d/m/Y" }}</span>
+
+            <div class="record-card-actions">
+              <a
+                class="btn-floating btn-small waves-effect waves-light btn-edit"
+                href="{% url 'food:category-edit' pk=category_item.pk %}"
+                title="Editar"
+              >
+                <i class="material-icons">edit</i>
+              </a>
+
+              <form
+                method="post"
+                action="{% url 'food:category-delete' pk=category_item.pk %}"
+                style="display: inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="btn-floating btn-small waves-effect waves-light btn-delete"
+                  title="Eliminar"
+                >
+                  <i class="material-icons">delete</i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
     {% endif %}
   </div>
 </div>

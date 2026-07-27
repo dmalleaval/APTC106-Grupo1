@@ -12,7 +12,7 @@
 
   <p>Agrega algunos productos para comenzar tu compra.</p>
 
-  <a href="{% url 'food:home' %}" class="btn"> Seguir comprando </a>
+  <a href="{% url 'food:shop' %}" class="btn"> Seguir comprando </a>
 </div>
 
 {% else %}
@@ -123,9 +123,16 @@
   </div>
 
   <div class="card-action right-align">
-    <a href="{% url 'food:home' %}" class="btn grey"> Seguir comprando </a>
+    <a href="{% url 'food:shop' %}" class="btn grey"> Seguir comprando </a>
 
-    <a href="#" class="btn green"> Confirmar pedido </a>
+    <form
+      method="post"
+      action="{% url 'food:cart-confirm' %}"
+      style="display: inline"
+    >
+      {% csrf_token %}
+      <button type="submit" class="btn green">Confirmar pedido</button>
+    </form>
   </div>
 </div>
 

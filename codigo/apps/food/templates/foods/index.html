@@ -8,34 +8,33 @@
     >
   </div>
 </div>
-<div class="table-responsive">
-  <table class="striped centered">
-    <div class="row">
-      <div class="col s12">
-        {% if not foods %}
-        <div class="card-panel red">
-          <span class="white-text">No hay registros actualmente</span>
-        </div>
-        {% else %}
-        <table class="striped centered">
-          <thead>
-            <tr>
-              <th width="20%">Nombre</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Imagen</th>
-              <th>Disponible</th>
-              <th>Activo</th>
-              <th>Actualizada</th>
-              <th width="20%">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for food in foods %}
-            <tr>
-              <td width="20%">{{ food.nombre }}</td>
-              <td>{{ food.descripcion | truncatechars:120 }}</td>
-              <td>$ {{ food.precio|floatformat:0 }}</td>
+<div class="row">
+  <div class="col s12">
+    {% if not foods %}
+    <div class="card-panel red">
+      <span class="white-text">No hay registros actualmente</span>
+    </div>
+    {% else %}
+    <div class="table-responsive">
+      <table class="striped centered">
+        <thead>
+          <tr>
+            <th width="20%">Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Imagen</th>
+            <th>Disponible</th>
+            <th>Activo</th>
+            <th>Actualizada</th>
+            <th width="20%">Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for food in foods %}
+          <tr>
+            <td width="20%">{{ food.nombre }}</td>
+            <td>{{ food.descripcion|truncatechars:60 }}</td>
+            <td>$ {{ food.precio|floatformat:0 }}</td>
               <td>
                 {% if food.imagen %}
                 <img
@@ -45,7 +44,13 @@
                 />
                 {% else %} Sin imagen {% endif %}
               </td>
-              <td>{% if food.disponible %} ✅ {% else %} ❌ {% endif %}</td>
+              <td>
+                {% if food.disponible %}
+                <i class="material-icons available-yes" title="Disponible">check_circle</i>
+                {% else %}
+                <i class="material-icons available-no" title="No disponible">cancel</i>
+                {% endif %}
+              </td>
               <td>
                 {% if food.activo %}
                 <span class="status status-active">Activo</span>
@@ -86,13 +91,78 @@
                   <i class="material-icons">visibility</i>
                 </a>
               </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        {% endif %}
-      </div>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-  </table>
+
+    <div class="record-cards">
+      {% for food in foods %}
+      <div class="record-card">
+        <div class="record-card-media">
+          {% if food.imagen %}
+          <img src="{{ food.imagen.url }}" alt="{{ food.nombre }}" />
+          {% else %}
+          <i class="material-icons">fastfood</i>
+          {% endif %}
+        </div>
+
+        <div class="record-card-body">
+          <div class="record-card-top">
+            <span class="record-card-name">{{ food.nombre }}</span>
+            {% if food.activo %}
+            <span class="status status-active">Activo</span>
+            {% else %}
+            <span class="status status-inactive">Inactivo</span>
+            {% endif %}
+          </div>
+
+          {% if food.descripcion %}
+          <p class="record-card-desc">{{ food.descripcion|truncatechars:90 }}</p>
+          {% endif %}
+
+          <div class="record-card-bottom">
+            <span class="record-card-price">$ {{ food.precio|floatformat:0 }}</span>
+
+            <div class="record-card-actions">
+              <a
+                class="btn-floating btn-small waves-effect waves-light btn-edit"
+                href="{% url 'food:foods-edit' pk=food.pk %}"
+                title="Editar"
+              >
+                <i class="material-icons">edit</i>
+              </a>
+
+              <form
+                method="post"
+                action="{% url 'food:foods-delete' pk=food.pk %}"
+                style="display: inline"
+              >
+                {% csrf_token %}
+                <button
+                  type="submit"
+                  class="btn-floating btn-small waves-effect waves-light btn-delete"
+                  title="Eliminar"
+                >
+                  <i class="material-icons">delete</i>
+                </button>
+              </form>
+
+              <a
+                class="btn-floating btn-small waves-effect waves-light btn-detail"
+                href="{% url 'food:foods-detail' pk=food.pk %}"
+                title="Ver detalle"
+              >
+                <i class="material-icons">visibility</i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
