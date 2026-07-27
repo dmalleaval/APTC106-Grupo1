@@ -1,11 +1,13 @@
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-from django.db.models import F
+from django.db.models import F, Q
 from django.db import transaction
 
-from .forms import LoginForm, FoodsForm
+from .forms import LoginForm, FoodsForm, CategoriaForm
 from .models import Categoria
 from .models import DetallePedido, Pedido, Producto
 
@@ -64,7 +66,7 @@ def log_out(request):
     return redirect("food:log-in")
 
 
-@login_required
+@staff_member_required(login_url="food:log-in")
 def food_list(request):
     foods = Producto.objects.select_related("categoria").all()
     return render(request, "foods/index.html", {"foods": foods})
@@ -76,7 +78,7 @@ def food_detail(request, pk):
     return render(request, "foods/detail.html", {"food": food})
 
 
-@login_required
+@staff_member_required(login_url="food:log-in")
 def food_create(request):
     form = FoodsForm(
         request.POST or None,
@@ -85,6 +87,7 @@ def food_create(request):
 
     if request.method == "POST" and form.is_valid():
         form.save()
+        messages.success(request, "Producto creado correctamente.")
         return redirect("food:home")
 
     context = {
@@ -100,12 +103,12 @@ def food_create(request):
 
     return render(
         request,
-        "foods/form.html",
+        "foods/product_form.html",
         context,
     )
 
 
-@login_required
+@staff_member_required(login_url="food:log-in")
 def food_update(request, pk):
     food = get_object_or_404(Producto, pk=pk)
 
@@ -117,6 +120,7 @@ def food_update(request, pk):
 
     if request.method == "POST" and form.is_valid():
         form.save()
+        messages.success(request, "Producto actualizado correctamente.")
         return redirect("food:home")
 
     context = {
@@ -132,20 +136,31 @@ def food_update(request, pk):
 
     return render(
         request,
-        "foods/form.html",
+        "foods/product_form.html",
         context,
     )
 
 
-@login_required
+@staff_member_required(login_url="food:log-in")
 @require_POST
 def food_delete(request, pk):
     food = get_object_or_404(Producto, pk=pk)
-    food.delete()
+
+    if food.detalles_pedido.exists():
+        food.activo = False
+        food.save(update_fields=["activo"])
+        messages.success(
+            request,
+            "El producto tiene pedidos asociados, se desactivó en lugar de eliminarse.",
+        )
+    else:
+        food.delete()
+        messages.success(request, "Producto eliminado correctamente.")
+
     return redirect("food:home")
 
 
-@login_required
+@staff_member_required(login_url="food:log-in")
 def category_list(request):
     categories = Categoria.objects.all()
     return render(
@@ -153,6 +168,81 @@ def category_list(request):
         "foods/category/category_list.html",
         {"categories": categories},
     )
+
+
+@staff_member_required(login_url="food:log-in")
+def category_create(request):
+    form = CategoriaForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Categoría creada correctamente.")
+        return redirect("food:category-list")
+
+    context = {
+        "form": form,
+        "form_title": "Agregar categoría",
+        "form_subtitle": "Completa la información de la categoría.",
+        "form_icon": "category",
+        "submit_text": "Crear categoría",
+        "submit_icon": "save",
+        "cancel_url": "food:category-list",
+        "cancel_text": "Cancelar",
+    }
+
+    return render(
+        request,
+        "foods/form.html",
+        context,
+    )
+
+
+@staff_member_required(login_url="food:log-in")
+def category_update(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+
+    form = CategoriaForm(request.POST or None, instance=categoria)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Categoría actualizada correctamente.")
+        return redirect("food:category-list")
+
+    context = {
+        "form": form,
+        "form_title": "Editar categoría",
+        "form_subtitle": "Actualiza la información de la categoría.",
+        "form_icon": "edit",
+        "submit_text": "Guardar cambios",
+        "submit_icon": "save",
+        "cancel_url": "food:category-list",
+        "cancel_text": "Cancelar",
+    }
+
+    return render(
+        request,
+        "foods/form.html",
+        context,
+    )
+
+
+@staff_member_required(login_url="food:log-in")
+@require_POST
+def category_delete(request, pk):
+    categoria = get_object_or_404(Categoria, pk=pk)
+
+    if categoria.productos.exists():
+        categoria.activa = False
+        categoria.save(update_fields=["activa"])
+        messages.success(
+            request,
+            "La categoría tiene productos asociados, se desactivó en lugar de eliminarse.",
+        )
+    else:
+        categoria.delete()
+        messages.success(request, "Categoría eliminada correctamente.")
+
+    return redirect("food:category-list")
 
 
 @login_required
@@ -213,8 +303,27 @@ def cart_detail(request):
     )
 
 
+@login_required
+@require_POST
+def confirmar_pedido(request):
+    pedido = Pedido.objects.filter(
+        cliente=request.user,
+        estado=Pedido.Estado.CARRITO,
+    ).first()
+
+    if pedido is None or not pedido.detalles.exists():
+        messages.error(request, "No puedes confirmar un carrito vacío.")
+        return redirect("food:cart-detail")
+
+    pedido.estado = Pedido.Estado.CONFIRMADO
+    pedido.save(update_fields=["estado"])
+    messages.success(request, "Tu pedido fue confirmado correctamente.")
+    return redirect("food:shop")
+
+
 def shop(request):
     categoria_seleccionada = request.GET.get("categoria")
+    q = request.GET.get("q", "").strip()
 
     productos = Producto.objects.filter(
         activo=True,
@@ -225,12 +334,18 @@ def shop(request):
     if categoria_seleccionada:
         productos = productos.filter(categoria_id=categoria_seleccionada)
 
+    if q:
+        productos = productos.filter(
+            Q(nombre__icontains=q) | Q(descripcion__icontains=q)
+        )
+
     categorias = Categoria.objects.filter(activa=True).order_by("nombre")
 
     context = {
         "productos": productos,
         "categorias": categorias,
         "categoria_seleccionada": categoria_seleccionada,
+        "q": q,
     }
 
     return render(

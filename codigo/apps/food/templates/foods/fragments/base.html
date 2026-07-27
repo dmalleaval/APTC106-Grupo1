@@ -27,20 +27,37 @@
 
     <style>
       :root {
-        --primary: #e85d35;
-        --primary-dark: #c94725;
-        --secondary: #ffb703;
-        --background: #fffaf4;
+        --primary: #e8622c;
+        --primary-dark: #c9612f;
+        --secondary: #f0b429;
+        --background: #faf5ec;
         --surface: #ffffff;
-        --text: #2f2f2f;
-        --muted: #777777;
-        --border: #f0dfd1;
-        --success: #2e7d32;
-        --danger: #d84343;
+        --surface-muted: #fbf6ef;
+        --text: #2b2320;
+        --text-soft: #3a312b;
+        --muted: #8a7c6e;
+        --border: #e7ddcf;
+        --border-soft: #f3e9db;
+        --success: #2f8b4a;
+        --success-bg: #e7f5ea;
+        --danger: #c0392b;
+        --danger-bg: #fbeae8;
+        --edit: #c9612f;
+        --edit-bg: #fdecdd;
+        --info: #2e6bc7;
+        --info-bg: #eaf1fb;
       }
 
       * {
         box-sizing: border-box;
+      }
+
+      html,
+      body {
+        /* evita que cualquier elemento ancho (tabla, imagen, texto largo)
+           empuje la página entera hacia los costados en mobile */
+        max-width: 100%;
+        overflow-x: hidden;
       }
 
       body {
@@ -49,6 +66,10 @@
         background-color: var(--background);
         color: var(--text);
         font-family: "Poppins", sans-serif;
+      }
+
+      img {
+        max-width: 100%;
       }
 
       .promo-bar {
@@ -387,11 +408,9 @@
       .product-image {
         width: 76px;
         height: 76px;
-        padding: 4px;
-        background-color: #ffffff;
         border: 1px solid var(--border);
         border-radius: 12px;
-        object-fit: contain;
+        object-fit: cover;
       }
 
       .status {
@@ -406,24 +425,254 @@
 
       .status-active {
         color: var(--success);
-        background-color: #e8f5e9;
+        background-color: var(--success-bg);
       }
 
       .status-inactive {
         color: var(--danger);
-        background-color: #ffebee;
+        background-color: var(--danger-bg);
       }
 
-      .side-nav {
+      .available-yes {
+        color: var(--success);
+      }
+
+      .available-no {
+        color: var(--danger);
+      }
+
+      .snackbar-container {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 360px;
+        max-width: calc(100vw - 24px);
+      }
+
+      .snackbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        color: #fff;
+        opacity: 0;
+        transform: translateY(16px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+      }
+
+      .snackbar.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .snackbar.is-hiding {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      .snackbar-success {
+        background-color: var(--success);
+      }
+
+      .snackbar-error {
+        background-color: var(--danger);
+      }
+
+      .snackbar-warning {
+        background-color: var(--secondary);
+        color: var(--text);
+      }
+
+      .snackbar-icon {
+        flex-shrink: 0;
+      }
+
+      .snackbar-text {
+        flex: 1;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+
+      .snackbar-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        opacity: 0.85;
+      }
+
+      .snackbar-close:hover {
+        opacity: 1;
+      }
+
+      .snackbar-close i {
+        font-size: 18px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .snackbar-container {
+          left: 12px;
+          right: 12px;
+          bottom: 12px;
+          width: auto;
+        }
+      }
+
+      /* Listado en tarjetas: reemplaza la tabla en pantallas angostas para
+         que no haga falta scroll horizontal (ver media query más abajo). */
+      .record-cards {
+        display: none;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .record-card {
+        display: flex;
+        gap: 14px;
+        padding: 14px;
         background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(43, 35, 32, 0.05);
       }
 
-      .side-nav li {
+      .record-card-media {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        flex-shrink: 0;
+        background-color: var(--surface-muted);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--muted);
+        overflow: hidden;
+      }
+
+      .record-card-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .record-card-body {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .record-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .record-card-name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .record-card-desc {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .record-card-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .record-card-price {
+        font-weight: 700;
+        font-size: 14px;
+        color: var(--text-soft);
+      }
+
+      .record-card-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      @media only screen and (max-width: 900px) {
+        .table-responsive {
+          display: none;
+        }
+
+        .record-cards {
+          display: flex;
+        }
+      }
+
+      /* Menú mobile implementado a mano (no se usa el plugin sideNav de
+         Materialize 0.100.2, que trae su propia regla ".side-nav" con
+         position/width/transform propios y la misma especificidad que
+         cualquier override por clase — por eso se apunta por #nav-mobile,
+         un ID siempre gana esa pulseada de especificidad). Se abre/cierra
+         agregando la clase .is-open vía JS, ver el <script> al final. */
+      #nav-mobile {
         display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: 280px;
+        max-width: 80vw;
+        height: 100%;
+        margin: 0;
+        padding: 20px 0 0;
+        overflow-y: auto;
+        background-color: var(--surface);
+        box-shadow: 0 0 24px rgba(0, 0, 0, 0.25);
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+      }
+
+      #nav-mobile.is-open {
+        transform: translateX(0);
+      }
+
+      .side-nav-overlay {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 999;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+      }
+
+      .side-nav-overlay.is-open {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      #nav-mobile li {
+        display: block;
+        float: none;
         height: auto;
       }
 
-      .side-nav li > a {
+      #nav-mobile li > a {
         display: flex;
         align-items: center;
         gap: 20px;
@@ -433,9 +682,120 @@
         font-weight: 500;
       }
 
-      .side-nav li > a i.material-icons {
+      #nav-mobile li > a i.material-icons {
         margin: 0;
         color: rgba(0, 0, 0, 0.54);
+      }
+
+      /* Submenú "Editar" (desktop, dropdown flotante) */
+      .nav-dropdown {
+        position: relative;
+        display: flex;
+        align-items: center;
+        height: 72px;
+      }
+
+      .nav-dropdown summary {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        height: 72px;
+        padding: 0 15px;
+        color: var(--text);
+        font-weight: 500;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-dropdown summary:hover {
+        color: var(--primary);
+        background-color: #fff2e9;
+      }
+
+      .nav-dropdown-menu {
+        display: block;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        width: max-content;
+        min-width: 210px;
+        height: auto;
+        margin: 6px 0 0;
+        padding: 8px 0;
+        list-style: none;
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(88, 54, 31, 0.15);
+        overflow: hidden;
+      }
+
+      .nav-dropdown-menu li {
+        display: block;
+        float: none;
+        height: auto;
+      }
+
+      .nav-dropdown-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 44px;
+        padding: 0 18px;
+        color: var(--text);
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .nav-dropdown-menu li a:hover {
+        color: var(--primary);
+        background-color: #fff2e9;
+      }
+
+      /* Submenú "Editar" (mobile, dentro del side-nav) */
+      .nav-dropdown-mobile summary {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 48px;
+        padding: 0 32px;
+        color: var(--text);
+        font-weight: 500;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .nav-dropdown-mobile summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .nav-dropdown-mobile summary i.material-icons {
+        margin: 0;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .nav-dropdown-mobile-menu {
+        display: block;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background-color: #fff7f0;
+      }
+
+      .nav-dropdown-mobile-menu li {
+        display: block;
+        float: none;
+        height: auto;
+      }
+
+      .nav-dropdown-mobile-menu li > a {
+        padding-left: 64px;
       }
 
       .mobile-logout-form {
@@ -481,6 +841,12 @@
         font-size: 12px;
       }
 
+      .table-responsive {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
       @media only screen and (max-width: 992px) {
         nav .nav-wrapper {
           position: relative;
@@ -507,10 +873,6 @@
 
         .page-container {
           padding-top: 15px;
-        }
-
-        .table-responsive {
-          overflow-x: auto;
         }
 
         table {
@@ -579,37 +941,56 @@
         transform: scale(0.95);
       }
 
+      .btn-edit,
+      .btn-delete,
+      .btn-detail {
+        border-radius: 9px;
+        box-shadow: none;
+      }
+
+      .btn-edit i,
+      .btn-delete i,
+      .btn-detail i {
+        color: inherit;
+      }
+
       /* ---------- Editar ---------- */
 
       .btn-edit {
-        background: #fb8c00;
+        background: var(--edit-bg);
+        color: var(--edit);
       }
 
       .btn-edit:hover {
-        background: #ef6c00 !important;
-        box-shadow: 0 0 16px rgba(239, 108, 0, 0.55);
+        background: var(--edit) !important;
+        color: #fff !important;
+        box-shadow: 0 6px 16px rgba(201, 97, 47, 0.35);
       }
 
       /* ---------- Eliminar ---------- */
 
       .btn-delete {
-        background: #e53935;
+        background: var(--danger-bg);
+        color: var(--danger);
       }
 
       .btn-delete:hover {
-        background: #c62828 !important;
-        box-shadow: 0 0 16px rgba(198, 40, 40, 0.55);
+        background: var(--danger) !important;
+        color: #fff !important;
+        box-shadow: 0 6px 16px rgba(192, 57, 43, 0.35);
       }
 
       /* ---------- Ver detalle ---------- */
 
       .btn-detail {
-        background: #1e88e5;
+        background: var(--info-bg);
+        color: var(--info);
       }
 
       .btn-detail:hover {
-        background: #1565c0 !important;
-        box-shadow: 0 0 16px rgba(21, 101, 192, 0.55);
+        background: var(--info) !important;
+        color: #fff !important;
+        box-shadow: 0 6px 16px rgba(46, 107, 199, 0.35);
       }
 
       /* ---------- Agregar ---------- */
@@ -635,6 +1016,7 @@
       .product-form-card {
         width: 100%;
         max-width: 820px;
+        min-width: 0;
         padding: 30px;
         background-color: var(--surface);
         border: 1px solid var(--border);
@@ -680,11 +1062,14 @@
       .product-form {
         display: flex;
         flex-direction: column;
+        min-width: 0;
+        max-width: 100%;
         gap: 22px;
       }
 
       .form-group {
         position: relative;
+        min-width: 0;
         margin: 0;
       }
 
@@ -698,7 +1083,10 @@
 
       .custom-input,
       .materialize-textarea.custom-input {
+        box-sizing: border-box !important;
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
         min-height: 48px;
         margin: 0 !important;
         padding: 0 14px !important;
@@ -904,15 +1292,6 @@
         </a>
 
         <ul class="right hide-on-med-and-down">
-          {% if request.user.is_authenticated %}
-          <li>
-            <a href="{% url 'food:home' %}">
-              <i class="material-icons">restaurant_menu</i>
-              <span>Productos</span>
-            </a>
-          </li>
-          {% endif %}
-
           <li>
             <a href="{% url 'food:shop' %}">
               <i class="material-icons">storefront</i>
@@ -920,12 +1299,28 @@
             </a>
           </li>
 
-          {% if request.user.is_authenticated %}
+          {% if request.user.is_staff %}
           <li>
-            <a href="{% url 'food:category-list' %}">
-              <i class="material-icons">category</i>
-              <span>Categorías</span>
-            </a>
+            <details class="nav-dropdown">
+              <summary>
+                <i class="material-icons">edit</i>
+                <span>Editar</span>
+              </summary>
+              <ul class="nav-dropdown-menu">
+                <li>
+                  <a href="{% url 'food:home' %}">
+                    <i class="material-icons">restaurant_menu</i>
+                    <span>Editar productos</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'food:category-list' %}">
+                    <i class="material-icons">category</i>
+                    <span>Editar categorías</span>
+                  </a>
+                </li>
+              </ul>
+            </details>
           </li>
           {% endif %}
 
@@ -953,10 +1348,17 @@
               </button>
             </form>
           </li>
+          {% else %}
+          <li>
+            <a href="{% url 'food:log-in' %}">
+              <i class="material-icons">login</i>
+              <span>Iniciar sesión</span>
+            </a>
+          </li>
           {% endif %}
         </ul>
 
-        <ul id="nav-mobile" class="side-nav">
+        <ul id="nav-mobile">
           <li>
             <a href="{% url 'food:shop' %}">
               <i class="material-icons">storefront</i>
@@ -964,19 +1366,28 @@
             </a>
           </li>
 
-          {% if request.user.is_authenticated %}
+          {% if request.user.is_staff %}
           <li>
-            <a href="{% url 'food:home' %}">
-              <i class="material-icons">restaurant_menu</i>
-              Productos
-            </a>
-          </li>
-
-          <li>
-            <a href="{% url 'food:category-list' %}">
-              <i class="material-icons">category</i>
-              Categorías
-            </a>
+            <details class="nav-dropdown-mobile">
+              <summary>
+                <i class="material-icons">edit</i>
+                Editar
+              </summary>
+              <ul class="nav-dropdown-mobile-menu">
+                <li>
+                  <a href="{% url 'food:home' %}">
+                    <i class="material-icons">restaurant_menu</i>
+                    Editar productos
+                  </a>
+                </li>
+                <li>
+                  <a href="{% url 'food:category-list' %}">
+                    <i class="material-icons">category</i>
+                    Editar categorías
+                  </a>
+                </li>
+              </ul>
+            </details>
           </li>
           {% endif %}
 
@@ -1002,15 +1413,25 @@
               </button>
             </form>
           </li>
+          {% else %}
+          <li>
+            <a href="{% url 'food:log-in' %}">
+              <i class="material-icons">login</i>
+              Iniciar sesión
+            </a>
+          </li>
           {% endif %}
         </ul>
 
-        <a href="#" data-activates="nav-mobile" class="button-collapse">
+        <a href="#" id="menuToggle" class="button-collapse">
           <i class="material-icons">menu</i>
         </a>
       </div>
     </nav>
 
+    <div class="side-nav-overlay" id="sideNavOverlay"></div>
+
+    {% if request.resolver_match.url_name == "shop" %}
     <div class="container search-section">
       <form method="get" action="{% url 'food:shop' %}">
         <div class="search-box">
@@ -1025,6 +1446,25 @@
         </div>
       </form>
     </div>
+    {% endif %}
+
+    {% if messages %}
+    <div class="snackbar-container" id="snackbarContainer">
+      {% for message in messages %}
+      <div
+        class="snackbar snackbar-{% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %}"
+      >
+        <i class="material-icons snackbar-icon">
+          {% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}check_circle{% endif %}
+        </i>
+        <span class="snackbar-text">{{ message }}</span>
+        <button type="button" class="snackbar-close" aria-label="Cerrar">
+          <i class="material-icons">close</i>
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
     <main class="container page-container">
       {% block main-content %}{% endblock %}
@@ -1046,9 +1486,88 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
 
     <script>
-      $(document).ready(function () {
-        $(".button-collapse").sideNav();
+      document.addEventListener("DOMContentLoaded", function () {
+        var menuToggle = document.getElementById("menuToggle");
+        var sideNav = document.getElementById("nav-mobile");
+        var overlay = document.getElementById("sideNavOverlay");
 
+        function closeMenu() {
+          sideNav.classList.remove("is-open");
+          overlay.classList.remove("is-open");
+          document.body.style.overflow = "";
+        }
+
+        if (menuToggle && sideNav && overlay) {
+          menuToggle.addEventListener("click", function (event) {
+            event.preventDefault();
+            var isOpen = sideNav.classList.toggle("is-open");
+            overlay.classList.toggle("is-open", isOpen);
+            document.body.style.overflow = isOpen ? "hidden" : "";
+          });
+
+          overlay.addEventListener("click", closeMenu);
+
+          sideNav.querySelectorAll("a, button").forEach(function (el) {
+            el.addEventListener("click", closeMenu);
+          });
+        }
+
+        // Cierra los dropdowns "Editar" (desktop y mobile) al hacer clic
+        // afuera, ya que <details> nativo solo se cierra con otro clic
+        // en su propio <summary>.
+        document.querySelectorAll(".nav-dropdown, .nav-dropdown-mobile").forEach(
+          function (dropdown) {
+            dropdown.addEventListener("toggle", function () {
+              if (dropdown.open) {
+                document
+                  .querySelectorAll(".nav-dropdown, .nav-dropdown-mobile")
+                  .forEach(function (other) {
+                    if (other !== dropdown) {
+                      other.open = false;
+                    }
+                  });
+              }
+            });
+          }
+        );
+
+        document.addEventListener("click", function (event) {
+          document.querySelectorAll(".nav-dropdown").forEach(function (dropdown) {
+            if (dropdown.open && !dropdown.contains(event.target)) {
+              dropdown.open = false;
+            }
+          });
+        });
+
+        // Snackbars: aparecen, se autodescartan a los 5 segundos y se
+        // pueden cerrar antes con la X.
+        document.querySelectorAll(".snackbar").forEach(function (snackbar, index) {
+          var closeBtn = snackbar.querySelector(".snackbar-close");
+          var dismissed = false;
+
+          function dismiss() {
+            if (dismissed) return;
+            dismissed = true;
+            snackbar.classList.remove("is-visible");
+            snackbar.classList.add("is-hiding");
+            setTimeout(function () {
+              snackbar.remove();
+            }, 250);
+          }
+
+          setTimeout(function () {
+            snackbar.classList.add("is-visible");
+          }, 20 + index * 80);
+
+          setTimeout(dismiss, 5000 + index * 300);
+
+          if (closeBtn) {
+            closeBtn.addEventListener("click", dismiss);
+          }
+        });
+      });
+
+      $(document).ready(function () {
         $("select").material_select();
 
         $(".datepicker").pickadate({

@@ -33,7 +33,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Abre http://127.0.0.1:8000/ para iniciar sesión y http://127.0.0.1:8000/admin/ para administrar categorías y películas.
+Abre http://127.0.0.1:8000/ para iniciar sesión y http://127.0.0.1:8000/admin/ para administrar categorías y productos.
 
 ## Variables de entorno opcionales
 

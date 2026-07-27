@@ -30,7 +30,7 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         validators=[MinValueValidator(0)],
     )
     imagen = models.ImageField(
@@ -124,7 +124,7 @@ class DetallePedido(models.Model):
     )
     precio_unitario = models.DecimalField(
         max_digits=10,
-        decimal_places=2,
+        decimal_places=0,
         validators=[MinValueValidator(0)],
     )
     agregado_en = models.DateTimeField(auto_now_add=True)

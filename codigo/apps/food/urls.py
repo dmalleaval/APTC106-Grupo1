@@ -17,10 +17,17 @@ foods_patterns = [
     ),
 ]
 
+categories_patterns = [
+    path("", views.category_list, name="category-list"),
+    path("crear/", views.category_create, name="category-create"),
+    path("<int:pk>/editar/", views.category_update, name="category-edit"),
+    path("<int:pk>/eliminar/", views.category_delete, name="category-delete"),
+]
+
 urlpatterns = [
     path("", views.log_in, name="log-in"),
     path("log-out/", views.log_out, name="log-out"),
-    path("categorias/", views.category_list, name="category-list"),
+    path("categorias/", include(categories_patterns)),
     path("comidas/", include(foods_patterns)),
     path("carrito/", views.cart_detail, name="cart-detail"),
     path("tienda/", views.shop, name="shop"),
@@ -38,5 +45,10 @@ urlpatterns = [
         "carrito/<int:pk>/eliminar/",
         views.cart_delete,
         name="cart-delete",
+    ),
+    path(
+        "carrito/confirmar/",
+        views.confirmar_pedido,
+        name="cart-confirm",
     ),
 ]
